@@ -1,10 +1,12 @@
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import ray
 
-from application.actors.image_processor import ImageProcessorActor
-from settings import get_settings
+from bootstrap import bootstrap
+
+# from settings import get_settings
 
 from controllers.routers.photo import image_router
 
@@ -15,15 +17,10 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """application lifespan event handler"""
-    settings = get_settings()
-    ray.init()
-    ImageProcessorActor.options(
-        name=settings.actor_name,
-        get_if_exists=True
-    ).remote()
+    bootstrap()
     logger.info("Starting up...")
 
-    yieldclear
+    yield
     
     ray.shutdown()
     logger.info("Shutting down...")

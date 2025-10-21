@@ -1,4 +1,4 @@
-from datetime import time
+import time
 import glob
 from typing import Any, Dict
 import ray
@@ -19,6 +19,7 @@ class ImageProcessorActor:
         
     def get_status(self) -> Dict[str, Any]:
         """Returns the current status of the actor."""
+        
         return {
             "status": self.status,
             "processed_count": self.processed_count,
@@ -26,7 +27,7 @@ class ImageProcessorActor:
             "last_run_time_seconds": round(self.last_run_time, 2)
         }
         
-    async def process_batch(self) -> Dict[str, Any]:
+    async def process_batch(self, photo_path: str) -> Dict[str, Any]:
         """
         This actor handler for all resizing tasks.
         
