@@ -8,7 +8,7 @@ from bootstrap import bootstrap
 
 # from settings import get_settings
 
-from controllers.routers.photo import image_router
+from controllers.routers import photo_router
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, docs_url='/swagger')
 
-app.include_router(image_router, prefix='/images', tags=['images'])
+app.include_router(photo_router, prefix='/photo', tags=['images'])
 
 
 @app.get("/")

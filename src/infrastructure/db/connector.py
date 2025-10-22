@@ -1,18 +1,26 @@
+from typing import AsyncGenerator
 from fastapi import Depends
 
-from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 
-from src import get_settings
+from settings import get_settings
+
+
 
 settings = get_settings()
 
 
+engine = create_async_engine(
+    settings.database_url,
+    echo=False
+)
 
-class DbConnector:
-    def __init__(self, db_url: str = Depends(get_settings.database_url)):
-        self._engine = create_engine(db_url, echo=False, future=False)
+async_session_maker = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
 
-    @property
-    def engine(self):
-        return self._engine
-
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_maker() as session:
+        yield session

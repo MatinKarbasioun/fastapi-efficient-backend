@@ -9,7 +9,7 @@ from application.services.photo import ImageResizer, JPGResizer
 SOURCE_DIR = "source_images"
 
 
-@ray.remote
+@ray.remote(max_restarts=10, num_cpus=3, num_gpus=0)
 class ImageProcessorActor:
     def __init__(self):
         self.status = "IDLE"
